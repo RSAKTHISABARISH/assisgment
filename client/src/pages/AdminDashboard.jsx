@@ -65,7 +65,7 @@ const AdminDashboard = () => {
       toast.success('Test removed from system');
       fetchData();
     } catch (err) {
-      toast.error('Failed to delete test');
+      toast.error(err.response?.data?.message || 'Failed to delete test');
     }
   };
 
