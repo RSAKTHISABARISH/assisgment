@@ -26,9 +26,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const endpoint = isLogin 
-      ? `http://localhost:5000/api/auth/${role}/login` 
-      : `http://localhost:5000/api/auth/${role}/signup`;
+      ? `${API_URL}/api/auth/${role}/login` 
+      : `${API_URL}/api/auth/${role}/signup`;
     
     try {
       const res = await axios.post(endpoint, formData);

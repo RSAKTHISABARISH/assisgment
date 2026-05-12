@@ -13,8 +13,9 @@ const StudentPortal = () => {
 
   useEffect(() => {
     const fetchTests = async () => {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-        const response = await axios.get('http://localhost:5000/api/tests');
+        const response = await axios.get(`${API_URL}/api/tests`);
         setTests(response.data);
       } catch (err) {
         toast.error('Sync failure with neural link');

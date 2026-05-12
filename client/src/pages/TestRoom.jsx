@@ -28,8 +28,9 @@ const TestRoom = () => {
   }, []);
 
   const fetchTest = useCallback(async () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const response = await axios.get(`http://localhost:5000/api/tests/${id}`);
+      const response = await axios.get(`${API_URL}/api/tests/${id}`);
       setTest(response.data);
       setTimeLeft((response.data.questions?.length || 10) * 60);
       setLoading(false);
@@ -74,8 +75,9 @@ const TestRoom = () => {
       timeTaken: (test.questions.length * 60) - timeLeft
     };
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      await axios.post('http://localhost:5000/api/submissions', submissionData);
+      await axios.post(`${API_URL}/api/submissions`, submissionData);
       toast.success(`Data Synchronized. Efficiency: ${score * 10}%`);
       setTimeout(() => navigate('/student-portal'), 2000);
     } catch (err) {

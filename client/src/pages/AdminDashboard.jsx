@@ -26,10 +26,11 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchData = async () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
       const [subRes, testRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/submissions'),
-        axios.get('http://localhost:5000/api/tests')
+        axios.get(`${API_URL}/api/submissions`),
+        axios.get(`${API_URL}/api/tests`)
       ]);
       setSubmissions(subRes.data || []);
       setTests(testRes.data || []);
@@ -41,9 +42,10 @@ const AdminDashboard = () => {
   const handleGenerate = async (e) => {
     e.preventDefault();
     if (!topic) return;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     setGenerating(true);
     try {
-      await axios.post('http://localhost:5000/api/tests/generate', { topic });
+      await axios.post(`${API_URL}/api/tests/generate`, { topic });
       setTopic('');
       fetchData();
       toast.success('AI Test Generated Successfully!');
