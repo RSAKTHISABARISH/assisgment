@@ -105,7 +105,7 @@ const Login = () => {
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={20} />
                     <input 
                       type="text" 
-                      placeholder="sakthi" 
+                      placeholder="KAVIYA" 
                       className="input-field pl-12"
                       value={formData.fullName}
                       onChange={(e) => setFormData({...formData, fullName: e.target.value})}
@@ -125,7 +125,7 @@ const Login = () => {
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={20} />
               <input 
                 type="text" 
-                placeholder={role === 'student' ? '24110083' : 'admin'} 
+                placeholder={role === 'student' ? '24108043' : 'admin'} 
                 className="input-field pl-12"
                 value={role === 'student' ? formData.rollNumber : formData.username}
                 onChange={(e) => setFormData({...formData, [role === 'student' ? 'rollNumber' : 'username']: e.target.value})}
