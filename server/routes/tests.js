@@ -56,10 +56,19 @@ router.get('/:id', async (req, res) => {
 // Delete test
 router.delete('/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+
+    // First delete associated submissions to avoid foreign key errors
+    await supabase
+      .from('submissions')
+      .delete()
+      .eq('test_id', id);
+
+    // Then delete the test itself
     const { error } = await supabase
       .from('tests')
       .delete()
-      .eq('id', req.params.id);
+      .eq('id', id);
 
     if (error) throw error;
     res.json({ message: 'Test deleted successfully' });
