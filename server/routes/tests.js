@@ -53,6 +53,20 @@ router.get('/:id', async (req, res) => {
     console.error('Error fetching single test:', err);
     res.status(500).json({ message: 'Server Error' });
   }
+// Delete test
+router.delete('/:id', async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('tests')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+    res.json({ message: 'Test deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting test:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
 });
 
 module.exports = router;

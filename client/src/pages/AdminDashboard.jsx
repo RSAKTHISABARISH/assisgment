@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   Users, BookOpen, TrendingUp, Plus, Search, 
   Download, PieChart as PieIcon, BarChart as BarIcon, 
-  Loader2, CheckCircle, Clock, Award, LogOut
+  Loader2, CheckCircle, Clock, Award, LogOut, Trash2
 } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
@@ -57,6 +57,18 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteTest = async (id) => {
+    if (!window.confirm('Delete this test? Students will no longer be able to take it.')) return;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    try {
+      await axios.delete(`${API_URL}/api/tests/${id}`);
+      toast.success('Test removed from system');
+      fetchData();
+    } catch (err) {
+      toast.error('Failed to delete test');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
@@ -88,18 +100,15 @@ const AdminDashboard = () => {
           
           <div className="flex items-center gap-4">
             <div className="flex glass p-1 rounded-[1.5rem] border border-white/10">
-              <button 
-                onClick={() => setActiveTab('monitoring')}
-                className={`px-8 py-3 rounded-[1.2rem] transition-all font-black text-xs uppercase tracking-widest ${activeTab === 'monitoring' ? 'bg-white text-slate-900 shadow-xl' : 'text-white/50 hover:text-white'}`}
-              >
-                Monitor
-              </button>
-              <button 
-                onClick={() => setActiveTab('analytics')}
-                className={`px-8 py-3 rounded-[1.2rem] transition-all font-black text-xs uppercase tracking-widest ${activeTab === 'analytics' ? 'bg-white text-slate-900 shadow-xl' : 'text-white/50 hover:text-white'}`}
-              >
-                Analyze
-              </button>
+              {['monitoring', 'tests', 'analytics'].map(tab => (
+                <button 
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-8 py-3 rounded-[1.2rem] transition-all font-black text-xs uppercase tracking-widest ${activeTab === tab ? 'bg-white text-slate-900 shadow-xl' : 'text-white/50 hover:text-white'}`}
+                >
+                  {tab === 'monitoring' ? 'Monitor' : tab === 'tests' ? 'Tests' : 'Analyze'}
+                </button>
+              ))}
             </div>
             <button onClick={handleLogout} className="p-4 glass rounded-2xl text-white/40 hover:text-red-400 transition-colors">
               <LogOut size={20} />
@@ -138,7 +147,7 @@ const AdminDashboard = () => {
             {activeTab === 'monitoring' ? (
               <div className="glass rounded-[3rem] border border-white/5 overflow-hidden">
                 <div className="p-10 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-                  <div className="relative w-full max-w-sm">
+                  <div className="relative w-full max-sm:w-full">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20" size={20} />
                     <input 
                       type="text" 
@@ -147,10 +156,6 @@ const AdminDashboard = () => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                  </div>
-                  <div className="flex gap-4">
-                    <button className="px-6 py-4 glass-dark text-white/60 rounded-2xl hover:text-white transition-all font-bold text-xs">PDF</button>
-                    <button className="px-6 py-4 glass-dark text-white/60 rounded-2xl hover:text-white transition-all font-bold text-xs">XLS</button>
                   </div>
                 </div>
                 
@@ -186,6 +191,42 @@ const AdminDashboard = () => {
                       )}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            ) : activeTab === 'tests' ? (
+              <div className="glass rounded-[3rem] border border-white/5 overflow-hidden">
+                <div className="p-10 border-b border-white/5">
+                  <h2 className="text-2xl font-black text-white tracking-tighter">Active Deployments</h2>
+                </div>
+                <div className="p-6 grid grid-cols-1 gap-4">
+                  {tests.length === 0 ? (
+                    <div className="p-20 text-center text-white/20 italic font-bold">No tests deployed.</div>
+                  ) : (
+                    tests.map((test, i) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        key={test.id} 
+                        className="glass-dark p-6 rounded-3xl flex items-center justify-between group border border-white/5 hover:border-white/10 transition-all"
+                      >
+                        <div className="flex items-center gap-6">
+                          <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-blue-400">
+                            <BookOpen size={24} />
+                          </div>
+                          <div>
+                            <h4 className="text-xl font-black text-white tracking-tight">{test.topic}</h4>
+                            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">{test.questions?.length || 0} Questions • Created {new Date(test.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => handleDeleteTest(test.id)}
+                          className="p-4 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               </div>
             ) : (
